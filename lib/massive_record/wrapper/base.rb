@@ -5,6 +5,7 @@ require 'massive_record/wrapper/errors'
 require 'massive_record/wrapper/tables_collection'
 require 'massive_record/wrapper/column_families_collection'
 require 'massive_record/wrapper/cell'
+require 'massive_record/wrapper/retryable'
 
 module MassiveRecord
   module Wrapper
@@ -12,7 +13,12 @@ module MassiveRecord
       
       def self.config
         config = YAML.load_file(::Rails.root.join('config', 'hbase.yml'))[::Rails.env]
-        { :host => config['host'], :port => config['port'] }        
+        { 
+          :host => config['host'], 
+          :hosts => config['hosts'], 
+          :port => config['port'], 
+          :timeout => config['timeout'] 
+        }
       end
 
       def self.connection(opts = {})
@@ -21,6 +27,6 @@ module MassiveRecord
         conn
       end
       
-    end  
+    end
   end
 end

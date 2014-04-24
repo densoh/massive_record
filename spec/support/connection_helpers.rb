@@ -6,7 +6,10 @@ module SetUpHbaseConnectionBeforeAll
   included do
     before(:all) do
       unless @connection
-        @connection_configuration = {:host => MR_CONFIG['host'], :port => MR_CONFIG['port']}
+        @connection_configuration = {
+          :host => MR_CONFIG['host'], 
+          :port => MR_CONFIG['port']
+        }
         MassiveRecord::ORM::Base.connection_configuration = @connection_configuration
         @connection = MassiveRecord::Wrapper::Connection.new(@connection_configuration)
         @connection.open
@@ -40,6 +43,8 @@ module CreatePersonBeforeEach
       @table = MassiveRecord::Wrapper::Table.new(@connection, Person.table_name)
       @table.column_families.create(:info)
       @table.column_families.create(:base)
+      @table.column_families.create(:addresses)
+      @table.column_families.create(:addresses_with_timestamp)
       @table.save
       
       @row = MassiveRecord::Wrapper::Row.new
